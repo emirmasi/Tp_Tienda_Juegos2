@@ -21,6 +21,7 @@ object PurchaseRepository {
 
     fun add(purchase: Purchase) {
         //TODO Implementar solucion para agregar una nueva compra
+        purchases.add(purchase)
     }
 
     fun get() : List<Purchase> {
