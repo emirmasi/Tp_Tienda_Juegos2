@@ -25,7 +25,7 @@ object PurchaseRepository {
     }
 
     fun get() : List<Purchase> {
-        return emptyList() //TODO Implementar solucion para obtener todos los juegos
+        return purchases//TODO Implementar solucion para obtener todos los juegos
     }
 
 }
