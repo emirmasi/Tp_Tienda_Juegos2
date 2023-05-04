@@ -1,13 +1,12 @@
 package src.main.kotlin
 
-class Steam( val amountDte: Double,  val createdDateDte: String): Intermediario() {
-
+class EpicGames( val amountDte: Double,  val createdDateDte: String): Intermediario() {
     override val amount: Double = amountDte
     override val createdDate: String  = createdDateDte
 
-    ///aplicamos una comision de 2%
+    ///si se relaizo dentro de las 20:00 y 23:59 se descuenta un 1% si no un 3%
     override fun aplicarComision(): Double {
-        return amount + (amount * 0.02)
+        return amount + (amount * 0.0)
     }
 
     override fun aplicarDescuento(): Double {

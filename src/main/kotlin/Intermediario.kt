@@ -1,5 +1,12 @@
 package src.main.kotlin
 
-open class Intermediario(open val amount: Double,protected open val createdDate: String) {
+abstract class Intermediario() {
+
+    abstract val amount: Double
+    abstract val createdDate: String
+    abstract fun aplicarComision(): Double
+    abstract fun aplicarDescuento(): Double
 
 }
+
+
