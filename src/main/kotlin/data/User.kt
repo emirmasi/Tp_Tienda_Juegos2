@@ -8,4 +8,9 @@ data class User(
     val surname: String,
     val money: Double,
     val createdDate: String
-)
+){
+    override fun toString(): String {
+        return "User(id=$id, nickName='$nickName', password='$password', name='$name', surname='$surname', money=$money, createdDate='$createdDate')"
+    }
+
+}

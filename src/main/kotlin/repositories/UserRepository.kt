@@ -15,5 +15,9 @@ object UserRepository {
     fun login(nickName: String,password: String) : User? {
         return users.firstOrNull { user -> user.nickName == nickName && user.password == password }
     }
+    fun addUser(newUser: User):User?{
+        users.add(newUser)
+        return newUser
+    }
 
 }
