@@ -13,7 +13,7 @@ object UserRepository {
     }
 
     fun login(nickName: String,password: String) : User? {
-        return users.firstOrNull{user->user.nickName == nickName && user.password == password}
+        return users.firstOrNull { user -> user.nickName == nickName && user.password == password }
     }
 
 }
