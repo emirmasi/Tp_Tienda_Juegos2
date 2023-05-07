@@ -16,7 +16,18 @@ fun main(){
         games.crearUsuario()
 
     ///
-    games.realizarCompra()
+    do{
+        if(games.realizarCompra()){
+            println("COMPRA EXITOSA")
+        }else{
+            println("SU COMPRA NO SE PUDO REALIZAR")
+        }
+        println("quiere seguir comprando S(si) N(no) ")
+        var op = readln()!!.toString()
+
+
+    }while(op.uppercase() == "S")
+
 
     ///
     games.mostrarHistorialDeCompra()

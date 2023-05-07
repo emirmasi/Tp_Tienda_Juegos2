@@ -24,8 +24,12 @@ object PurchaseRepository {
         purchases.add(purchase)
     }
 
-    fun get() : List<Purchase> {
-        return purchases//TODO Implementar solucion para obtener todos los juegos
-    }
+        fun get() : List<Purchase> {
+            return purchases//TODO Implementar solucion para obtener todos los juegos
+        }
 
+        fun getLastId(): Long{
+        val ultimo = purchases.last()
+        return ultimo.id;
+    }
 }

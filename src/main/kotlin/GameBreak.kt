@@ -1,12 +1,18 @@
 package src.main.kotlin
 
+import repositories.GameRepository
+import repositories.PurchaseRepository
 import repositories.UserRepository
+
+import kotlin.RuntimeException
+import java.time.*
+import java.time.format.DateTimeFormatter
+
 
 class GameBreak() {
 
     lateinit var usuario: data.User
-    lateinit var juego: data.Game
-    lateinit var compra: data.Purchase
+
 
     fun crearUsuario():Boolean{
         ///aca van a pedir los datos al usuario
@@ -32,9 +38,53 @@ class GameBreak() {
     }
 
     fun realizarCompra(): Boolean{
-        ///damos a elegir el intermediario usamos bloques when y hacemos la compra
+        ///damos a elegir el intermediario usamos bloques when y hacemos la compr
         ///usar bloque try catch si el al usuario no le alcanza la plata mandamos un msj, manejamos nostros la excepcion
-        return true
+        val op:Int
+        println("ingrese el intermediario :")
+        println("1-Steam")
+        println("2-EpicGames")
+        println("3-Nakama")
+        op = readLine()!!.toInt()
+        //damos la opcion de elegir un juego
+
+        val listaDejuego = GameRepository.get()
+        println(listaDejuego)
+        println("elije el id del juego que quiere comprar");
+        val idJuego: Long = readLine()!!.toLong()
+        val juego = GameRepository.getById(idJuego)
+        try {
+            var precioDelJuego = juego.price
+            if(precioDelJuego > usuario.money)
+                throw RuntimeException("no posee dinero suficiente para comprar este juego")
+            when(op){
+                1->{
+                    val steam = Steam()
+                    //aplicamos los descuentos y comisiones
+                    precioDelJuego = steam.aplicarComision(precioDelJuego)
+                    precioDelJuego = steam.aplicarDescuento(usuario.createdDate,precioDelJuego)
+                }
+                2->{
+                    val epicGames = EpicGames()
+                    precioDelJuego = epicGames.aplicarComision(precioDelJuego)
+                    precioDelJuego = epicGames.aplicarDescuento(usuario.createdDate,precioDelJuego)
+                }
+                3->{
+                    val nakama = Nakama()
+                    precioDelJuego = nakama.aplicarComision(precioDelJuego)
+                    precioDelJuego = nakama.aplicarDescuento(usuario.createdDate,precioDelJuego)
+                }
+            }
+            ///agregamos la compra
+            val hoy = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-mm-dd"))
+            val compra = data.Purchase(PurchaseRepository.getLastId(),usuario.id,juego.id,precioDelJuego,hoy)
+            PurchaseRepository.add(compra)
+            return true
+        }catch(e: RuntimeException){
+            println(e.message)
+            return false
+        }
+
     }
 
     fun mostrarHistorialDeCompra(){
