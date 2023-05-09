@@ -30,6 +30,6 @@ object PurchaseRepository {
 
         fun getLastId(): Long{
         val ultimo = purchases.last()
-        return ultimo.id;
+        return ultimo.id+1;
     }
 }

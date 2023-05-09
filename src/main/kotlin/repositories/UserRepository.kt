@@ -19,5 +19,9 @@ object UserRepository {
         users.add(newUser)
         return newUser
     }
+    fun getLastId():Long{
+        val ultimo = users.last()
+        return ultimo.id+1
+    }
 
 }
