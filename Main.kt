@@ -13,12 +13,13 @@ fun main(){
     ///obviammente validamos todo
     //funcion menuInicio
 
-    println("1-loguear")
-    println("2-crearUsuario")
+    println ("ELEGIR OPCION:")
+    println("1-Loguear")
+    println("2-Crear Usuario")
     opciones = readln()!!.toInt()
     if(opciones==1){
         usuario = games.loguear()!!
-        println("logue exitoso")
+        println("Logue exitoso")
     }
 
 
@@ -52,8 +53,9 @@ fun main(){
                                 val hoy = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd")).toString()
                                 println(hoy)
                                 games.realizarCompra(PurchaseRepository.getLastId(),usuario.id,juego.id,precio,hoy)
+                                games.imprimirCompra(usuario.id,juego.name,juego.price,precio)
                             }else{
-                                throw RuntimeException("saldo insuficiente")
+                                throw RuntimeException("Saldo Insuficiente")
                             }
                         }catch(e: RuntimeException){
                             println(e.message)
@@ -109,7 +111,7 @@ fun main(){
         opciones = games.menuOpcional()
     }
 
-    println("gracias vuelvas prontos")
+    println("Gracias vuelva pronto")
 }
 
 

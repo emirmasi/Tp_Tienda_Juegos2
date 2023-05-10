@@ -2,7 +2,7 @@ package repositories
 
 import data.Purchase
 
-object PurchaseRepository {
+object  PurchaseRepository {
 
     private val purchases = mutableListOf<Purchase>()
 

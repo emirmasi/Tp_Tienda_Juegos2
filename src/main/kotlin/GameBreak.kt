@@ -16,19 +16,21 @@ class GameBreak(){
         var name:String
         var money:Double
 
-        println("ingrese el nickName")
+
+        println("Ingrese el NickName:")
         nickname = readLine()!!.toString()
-        println("ingrese el password")
+        println("Ingrese el password:")
         password = readLine()!!.toString()
-        println("ingrese su nombre")
+        println("Ingrese su nombre:")
         name = readln()!!.toString()
-        println("ingrese su apellido")
+        println("Ingrese su apellido:")
         surname = readln()!!.toString()
-        println("ingrese su money")
+        println("Ingrese su money:")
         money = readln()!!.toDouble()
 
-        usuario = data.User(UserRepository.getLastId(),nickname,password,name,surname,money, LocalDate.now().format(
-            DateTimeFormatter.ofPattern("yyyy-mm-dd")))
+
+
+        usuario = data.User(UserRepository.getLastId(),nickname,password,name,surname,money,LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd")).toString())
         UserRepository.addUser(usuario)
 
         return usuario
@@ -38,10 +40,10 @@ class GameBreak(){
         ///bloque try catch si es null manejar la excepcion nostros
         var nickname: String
         var password: String
-        println("ingrese el nickName")
+        println("Ingrese el nickName:")
         nickname = readLine()!!.toString()
 
-        println("ingrese el password")
+        println("Ingrese el password:")
         password = readLine()!!.toString()
 
         return  UserRepository.login(nickname,password)
@@ -65,6 +67,18 @@ class GameBreak(){
 
 
     }
+
+    fun imprimirCompra(id: Long,name: String, precioOriginal: Double, precioFinal: Double){
+        // mostrar precio original, con beneficio y descuento
+
+        println("DETALLES DE LA COMPRA:")
+        println("ID Usuario: $id \n" +
+                "Juego: $name  \n" +
+                "Precio original: $precioOriginal \n" +
+                "Precio final: $precioFinal")
+
+
+    }
     fun cargarSaldo(usuario: User,monto: Double):Double{
         usuario.money += monto
         return usuario.money
@@ -73,16 +87,20 @@ class GameBreak(){
         ///mediante el id del usuario mostramos la listade compras que realizo
         ///añadir funcion de retornarHistorial en PurcharseRepository
         ///etc mostrar con un formato lindo
+
         val compra: List<Purchase> = PurchaseRepository.get().filter { it.userId == id }
+        if (compra.isEmpty()){
+            println("No hay compras hasta el momento.")
+        }
         return compra
     }
     fun menuOpcional():Int{
         var op : Int
-        println("que desea hacer")
-        println("1-comprar juego")
-        println("2-mostrarCompra")
-        println("3-cargar saldo")
-        println("4-salir")
+        println("Que desea hacer:")
+        println("1-Comprar juego")
+        println("2-Mostrar Compras")
+        println("3-Cargar saldo")
+        println("4-Salir")
         op = readln()!!.toInt()
         return op
     }
@@ -95,7 +113,7 @@ class GameBreak(){
     }
     fun elegirJuego():Game?{
         var idJuego: Long
-        println("elegi un juego , poner id")
+        println("Elegir un juego , poner id")
         idJuego = readln()!!.toLong()
         println("id del juego: $idJuego")
         return GameRepository.getById(idJuego)
