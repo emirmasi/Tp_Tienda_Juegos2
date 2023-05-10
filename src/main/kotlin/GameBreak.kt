@@ -37,7 +37,6 @@ class GameBreak(){
     }
 
     fun loguear(): User?{
-        ///bloque try catch si es null manejar la excepcion nostros
         var nickname: String
         var password: String
         println("Ingrese el nickName:")
@@ -50,25 +49,28 @@ class GameBreak(){
 
     }
 
-    fun comprobarSaldo(usuar: User, jueg: Game): Boolean{
-        if(usuar.money>=jueg.price){
+    fun comprobarSaldo(usuar: User?, jueg: Game): Boolean{
+        if(usuar?.money!! >= jueg.price){
             return true
         }else{
             return false
         }
     }
 
-    fun realizarCompra(id: Long,userid: Long, gameid: Long,precio: Double,fecha: String){
+    fun realizarCompra(id: Long, userid: Long?, gameid: Long, precio: Double, fecha: String){
         ///damos a elegir el intermediario usamos bloques when y hacemos la compra
 
-        compra = data.Purchase(id,userid,gameid,precio,fecha)
+        compra = data.Purchase(id, userid!!,gameid,precio,fecha)
         PurchaseRepository.add(this.compra)
         ///usar bloque try catch si el al usuario no le alcanza la plata mandamos un msj, manejamos nostros la excepcion
 
 
     }
+    fun actualizarSaldo(precioDelJuego: Double, usuario: User){
+        usuario.money-=precioDelJuego
+    }
 
-    fun imprimirCompra(id: Long,name: String, precioOriginal: Double, precioFinal: Double){
+    fun imprimirCompra(id: Long?, name: String, precioOriginal: Double, precioFinal: Double){
         // mostrar precio original, con beneficio y descuento
 
         println("DETALLES DE LA COMPRA:")
@@ -79,11 +81,11 @@ class GameBreak(){
 
 
     }
-    fun cargarSaldo(usuario: User,monto: Double):Double{
-        usuario.money += monto
-        return usuario.money
+    fun cargarSaldo(usuario: User?, monto: Double):Double{
+        usuario?.money = usuario?.money!! + monto
+        return usuario?.money!!
     }
-    fun mostrarHistorialDeCompra(id: Long) :List<Purchase>{
+    fun mostrarHistorialDeCompra(id: Long?) :List<Purchase>{
         ///mediante el id del usuario mostramos la listade compras que realizo
         ///añadir funcion de retornarHistorial en PurcharseRepository
         ///etc mostrar con un formato lindo
@@ -115,7 +117,6 @@ class GameBreak(){
         var idJuego: Long
         println("Elegir un juego , poner id")
         idJuego = readln()!!.toLong()
-        println("id del juego: $idJuego")
         return GameRepository.getById(idJuego)
     }
     fun elegirIntermediario():Int{

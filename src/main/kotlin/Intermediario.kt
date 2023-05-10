@@ -3,7 +3,7 @@ package src.main.kotlin
 abstract class Intermediario() {
     abstract fun aplicarComision(precio: Double):Double
 
-    fun aplicarDescuento(createdDate: String, amount:Double):Double {
+    fun aplicarDescuento(createdDate: String?, amount:Double):Double {
 
         var descuento: Double
         val fecha  = Fecha(createdDate)
