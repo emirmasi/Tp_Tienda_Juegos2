@@ -8,7 +8,7 @@ class Nakama() : Intermediario(){
         if(dia=="sabado"||dia=="domingo"){
             return precio*1.03
         }else{
-            return precio*1.075
+            return precio*1.0075
             }
     }
 }

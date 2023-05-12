@@ -11,9 +11,8 @@ fun main(){
     var usuario: User? = null
     var entroCorectamente : Boolean = false
     var cantIntentos = 0
-    ///
 
-    while(!entroCorectamente && cantIntentos<2){
+    while(!entroCorectamente && cantIntentos<3){
         opciones = menu()
         when(opciones){
             1->{
@@ -51,7 +50,7 @@ fun main(){
 
     }
 
-    if(cantIntentos == 2){
+    if(cantIntentos == 3){
         println("cantidad de intentos maximo alcanzados , vuelva intentarlo mas tarde")
     }else{
         opciones = games.menuOpcional()
@@ -59,10 +58,9 @@ fun main(){
         while(opciones != 4){
             when(opciones){
                 1->{
-                    var inter = games.elegirIntermediario()
+                    val inter = games.elegirIntermediario()
                     games.mostrarJuego()
-                    lateinit var juego: data.Game
-                    juego = games.elegirJuego()!!
+                    val juego: data.Game = games.elegirJuego()!!
 
                     when(inter){
                         1->{ val steam = Steam()
@@ -75,7 +73,7 @@ fun main(){
 
                                     games.realizarCompra(PurchaseRepository.getLastId(),usuario?.id,juego.id,precio,hoy)
                                     games.actualizarSaldo(precio,usuario!!)
-                                    games.imprimirCompra(usuario?.id,juego.name,juego.price,precio)
+                                    games.imprimirCompra(usuario.id,juego.name,juego.price,precio)
                                 }else{
                                     throw RuntimeException("Saldo Insuficiente")
                                 }
@@ -89,10 +87,10 @@ fun main(){
                                     var precio:Double = juego.price
                                     precio  = epicGames.aplicarComision(precio)
                                     precio = epicGames.aplicarDescuento(usuario?.createdDate,precio)
-                                    val hoy = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-mm-dd"))
+                                    val hoy = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd")).toString()
                                     games.realizarCompra(PurchaseRepository.getLastId(),usuario?.id,juego.id,precio,hoy)
                                     games.actualizarSaldo(precio,usuario!!)
-                                    games.imprimirCompra(usuario?.id,juego.name,juego.price,precio)
+                                    games.imprimirCompra(usuario.id,juego.name,juego.price,precio)
                                 }else{
                                     throw RuntimeException("saldo insuficiente")
                                 }
@@ -107,10 +105,10 @@ fun main(){
                                     var precio:Double = juego.price
                                     precio  = nakama.aplicarComision(precio)
                                     precio = nakama.aplicarDescuento(usuario?.createdDate,precio)
-                                    val hoy = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-mm-dd"))
+                                    val hoy = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd")).toString()
                                     games.realizarCompra(PurchaseRepository.getLastId(),usuario?.id,juego.id,precio,hoy)
                                     games.actualizarSaldo(precio,usuario!!)
-                                    games.imprimirCompra(usuario?.id,juego.name,juego.price,precio)
+                                    games.imprimirCompra(usuario.id,juego.name,juego.price,precio)
                                 }else{
                                     throw RuntimeException("saldo insuficiente")
                                 }
@@ -127,11 +125,10 @@ fun main(){
                     }
                 }
                 3->{
-                    var monto:Double
                     println("ingresa monto deseado para cargar")
-                    monto = readln()!!.toDouble()
-                    var nuevoSaldo = games.cargarSaldo(usuario,monto)
-                    println("nuevo saldo: $nuevoSaldo")
+                    val monto:Double = readln().toDouble()
+                    games.cargarSaldo(usuario,monto)
+                    println("nuevo saldo: ${usuario?.money}")
                 }
             }
             opciones = games.menuOpcional()
@@ -144,10 +141,9 @@ fun main(){
 }
 
 fun menu():Int{
-    var opciones: Int
     println ("ELEGIR OPCION:")
     println("1-Loguear")
     println("2-Crear Usuario")
-    opciones = readln()!!.toInt()
+    val opciones: Int = readln().toInt()
     return opciones
 }
