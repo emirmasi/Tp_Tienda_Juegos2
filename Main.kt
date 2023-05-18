@@ -6,15 +6,14 @@ import java.time.format.DateTimeFormatter
 
 
 fun main(){
-    var opciones:Int
+    var opcionElegida:Int
     val games = GameBreak()
     var usuario: User? = null
-    var entroCorectamente : Boolean = false
     var cantIntentos = 0
 
-    while(!entroCorectamente && cantIntentos<3){
-        opciones = menu()
-        when(opciones){
+    while( usuario == null && cantIntentos<3){
+        opcionElegida = menu()
+        when(opcionElegida){
             1->{
                 try {
                     usuario = games.loguear()
@@ -23,7 +22,7 @@ fun main(){
                         throw RuntimeException("logueo incorrecto,intentelo de nuevo")
                     }
                     println("logue exitoso")
-                    entroCorectamente = true
+
 
                 }catch(e: Exception){
                     println(e.message)
@@ -37,7 +36,6 @@ fun main(){
                         throw RuntimeException("no se pudo crear usuario, intentelo de nuevo")
                     }
                     println("se creo el usuario exitosamente")
-                    entroCorectamente = true
                 }catch (e: Exception){
                     println(e.message)
                 }
@@ -49,89 +47,65 @@ fun main(){
         }
 
     }
-
     if(cantIntentos == 3){
         println("cantidad de intentos maximo alcanzados , vuelva intentarlo mas tarde")
-    }else{
-        opciones = games.menuOpcional()
+    }else{///hacer una funcion de altoOrden que le mandemos el intermediario y algo mas
+        opcionElegida = games.menuOpcional()///este esta bien
 
-        while(opciones != 4){
-            when(opciones){
+        while(opcionElegida != 4){
+            when(opcionElegida){
                 1->{
-                    val inter = games.elegirIntermediario()
-                    games.mostrarJuego()
-                    val juego: data.Game = games.elegirJuego()!!
-
-                    when(inter){
-                        1->{ val steam = Steam()
+                    val intermediarioElegido = games.elegirIntermediario()
+                    val juego: Game = games.elegirJuego()!!///en elegir jugo me debeira mostrar el juego ya traerlo
+                    when(intermediarioElegido){///funcion comprarJuego que nos traiga el intermediario
+                        1->{
                             try {
-                                if(games.comprobarSaldo(usuario,juego)){
-                                    var precio:Double = juego.price
-                                    precio  = steam.aplicarComision(precio)
-                                    precio = steam.aplicarDescuento(usuario?.createdDate,precio)
-                                    val hoy = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd")).toString()
-
-                                    games.realizarCompra(PurchaseRepository.getLastId(),usuario?.id,juego.id,precio,hoy)
-                                    games.actualizarSaldo(precio,usuario!!)
-                                    games.imprimirCompra(usuario.id,juego.name,juego.price,precio)
-                                }else{
-                                    throw RuntimeException("Saldo Insuficiente")
-                                }
-                            }catch(e: RuntimeException){
-                                println(e.message)
-                            }
-                        }
-                        2->{val epicGames = EpicGames()
-                            try {
-                                if(games.comprobarSaldo(usuario,juego)){
-                                    var precio:Double = juego.price
-                                    precio  = epicGames.aplicarComision(precio)
-                                    precio = epicGames.aplicarDescuento(usuario?.createdDate,precio)
-                                    val hoy = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd")).toString()
-                                    games.realizarCompra(PurchaseRepository.getLastId(),usuario?.id,juego.id,precio,hoy)
-                                    games.actualizarSaldo(precio,usuario!!)
-                                    games.imprimirCompra(usuario.id,juego.name,juego.price,precio)
-                                }else{
-                                    throw RuntimeException("saldo insuficiente")
-                                }
-                            }catch(e: RuntimeException){
-                                println(e.message)
+                                val steam = Steam()
+                                games.comprarJuego(steam,juego.id,juego.price,usuario!!)
+                                println("compra exitosa")
+                            }catch (e: saldont){
+                                println(e.getMensaje())
                             }
 
                         }
-                        3->{val nakama = Nakama()
+                        2->{
                             try {
-                                if(games.comprobarSaldo(usuario,juego)){
-                                    var precio:Double = juego.price
-                                    precio  = nakama.aplicarComision(precio)
-                                    precio = nakama.aplicarDescuento(usuario?.createdDate,precio)
-                                    val hoy = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd")).toString()
-                                    games.realizarCompra(PurchaseRepository.getLastId(),usuario?.id,juego.id,precio,hoy)
-                                    games.actualizarSaldo(precio,usuario!!)
-                                    games.imprimirCompra(usuario.id,juego.name,juego.price,precio)
-                                }else{
-                                    throw RuntimeException("saldo insuficiente")
-                                }
-                            }catch(e: RuntimeException){
-                                println(e.message)
+                                val epicGames = EpicGames()
+                                games.comprarJuego(epicGames,juego.id,juego.price,usuario!!)
+                                println("compra exitosa")
+                            }catch (e: saldont){
+                                println(e.getMensaje())
                             }
+
                         }
+                        3->{
+                            val nakama = Nakama()
+                            try {
+                                games.comprarJuego(nakama,juego.id,juego.price,usuario!!)
+                                println("compra exitosa")
+                            }catch(e: saldont){
+                                println(e.getMensaje())
+                            }
+
+                        }
+
                     }
+
                 }
-                2->{
+                2->{///funcion aparte gameBreak
                     val historialDecompra = games.mostrarHistorialDeCompra(usuario?.id)
-                    for(compra in historialDecompra){
+                    for(compra in historialDecompra){///este for no va , la funcion mostrarHistorialDecompra ya lo deberia mostrar
                         println(compra)
                     }
                 }
-                3->{
+                3->{///funcion aparte en GameBreak
                     println("ingresa monto deseado para cargar")
                     val monto:Double = readln().toDouble()
                     games.cargarSaldo(usuario,monto)
                     println("nuevo saldo: ${usuario?.money}")
                 }
             }
-            opciones = games.menuOpcional()
+            opcionElegida = games.menuOpcional()
         }
 
 
@@ -140,7 +114,7 @@ fun main(){
 
 }
 
-fun menu():Int{
+fun menu():Int{///aca tenemos que validar el numero
     println ("ELEGIR OPCION:")
     println("1-Loguear")
     println("2-Crear Usuario")

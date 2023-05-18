@@ -5,8 +5,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 class GameBreak(){
-    private lateinit var usuario: data.User
-    private lateinit var compra: data.Purchase
+    private lateinit var usuario:User
 
     fun crearUsuario():User?{
         ///aca van a pedir los datos al usuario
@@ -39,19 +38,21 @@ class GameBreak(){
         return  UserRepository.login(nickname,password)
 
     }
+    fun comprarJuego(intermediario: Intermediario,idGame: Long,precioDelJuego: Double,usuario: User){
+        ///logica de compra
+        val precioTotal = intermediario.aplicarComision(precioDelJuego)
+        if(usuario.comprobarSaldo(precioDelJuego)){//si puede comprar entonces realizo la compra
+            val hoy = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd")).toString()
+            usuario.realizarCompra(PurchaseRepository.getLastId(),idGame,precioTotal,hoy)
+            val cashBack = intermediario.calcularCashBack(hoy,precioTotal)
+            usuario.actualizarSaldo(precioTotal,cashBack);
+        }else{
+            ///enviar una excepcion
+            throw saldont()
+        }
 
-    fun comprobarSaldo(usuar: User?, jueg: Game): Boolean{
-        return usuar?.money!! >= jueg.price
     }
-
-    fun realizarCompra(id: Long, userid: Long?, gameid: Long, precio: Double, fecha: String){
-        compra = data.Purchase(id, userid!!,gameid,precio,fecha)
-        PurchaseRepository.add(this.compra)
-    }
-    fun actualizarSaldo(precioDelJuego: Double, usuario: User){
-        usuario.money-=precioDelJuego
-    }
-
+    ///esta funcion puede ser el de resumen de compra de purchase
     fun imprimirCompra(id: Long?, name: String, precioOriginal: Double, precioFinal: Double){
         // mostrar precio original, con beneficio y descuento
 
@@ -62,7 +63,7 @@ class GameBreak(){
                 "Precio final: $precioFinal")
 
     }
-    fun cargarSaldo(usuario: User?, monto: Double){
+    fun cargarSaldo(usuario: User?, monto: Double){///podria estar en user
         usuario?.money = usuario?.money!! + monto
     }
     fun mostrarHistorialDeCompra(id: Long?) :List<Purchase>{
@@ -76,7 +77,7 @@ class GameBreak(){
         }
         return compra
     }
-    fun menuOpcional():Int{
+    fun menuOpcional():Int{///validar
         println("Que desea hacer:")
         println("1-Comprar juego")
         println("2-Mostrar Compras")
@@ -85,22 +86,21 @@ class GameBreak(){
         val op : Int = readln().toInt()
         return op
     }
-    fun mostrarJuego(){
-        println("lista de juegos")
+
+    fun elegirJuego():Game?{
+        val idJuego: Long
+        println("---JUEGOS DISPONIBLES---")
         val listaDeJuegos: List<Game> = GameRepository.get()
         for(juego in listaDeJuegos){
             println(juego)
         }
-    }
-    fun elegirJuego():Game?{
-        val idJuego: Long
-
         println("Elegir un juego , poner id")
         idJuego = readln().toLong()
 
         return GameRepository.getById(idJuego)
     }
-    fun elegirIntermediario():Int{
+    fun elegirIntermediario():Int{///validarlo
+
         val op: Int
         println("Elegi un intermediario")
         println("1-Steam")
@@ -110,6 +110,8 @@ class GameBreak(){
         return op
     }
 }
-//class saldont(saldo: Boolean) : Exception()
+class saldont() : Exception(){
+    fun getMensaje():String = "saldo insuficiente"
+}
 
 

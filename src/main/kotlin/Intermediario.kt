@@ -2,14 +2,13 @@ package src.main.kotlin
 
 abstract class Intermediario() {
     abstract fun aplicarComision(precio: Double):Double
+    fun calcularCashBack(createdDate: String?, amount:Double):Double {
 
-    fun aplicarDescuento(createdDate: String?, amount:Double):Double {
-
-        val descuento: Double
+        val cashback: Double
         val fecha  = Fecha(createdDate)
-        val mesCreacion = fecha.calcularDiferenciaDeMeses()
+        val mesCreacion = fecha.calcularDiferenciaDeMeses()///funcion de Extensio de localDate
 
-        descuento = when(mesCreacion){
+        cashback = when(mesCreacion){
             in 1..3 -> {
                 0.05
             }
@@ -20,7 +19,7 @@ abstract class Intermediario() {
 
             else -> 0.0
         }
-        return amount - amount.times(descuento)
+        return amount.times(cashback)
     }
 
 
