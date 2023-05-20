@@ -7,7 +7,7 @@ import java.time.format.DateTimeFormatter
 class GameBreak(){
     private lateinit var usuario:User
 
-    fun crearUsuario():User?{
+    fun crearUsuario():User?{///este es de user
         ///aca van a pedir los datos al usuario
 
         println("Ingrese el NickName:")
@@ -21,13 +21,13 @@ class GameBreak(){
         println("Ingrese su money:")
         val money:Double = readln().toDouble()
 
-        usuario = User(UserRepository.getLastId(),nickname,password,name,surname,money,LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd")).toString())
+        usuario = User(UserRepository.getLastId(),nickname,password,name,surname,money,
+            LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd")).toString())
         UserRepository.addUser(usuario)
 
         return usuario
     }
-
-    fun loguear(): User?{
+    fun loguear(): User?{///este es de user
 
         println("Ingrese el nickName:")
         val nickname: String = readln()
@@ -54,8 +54,6 @@ class GameBreak(){
     }
     ///esta funcion puede ser el de resumen de compra de purchase
     fun imprimirCompra(id: Long?, name: String, precioOriginal: Double, precioFinal: Double){
-        // mostrar precio original, con beneficio y descuento
-
         println("DETALLES DE LA COMPRA:")
         println("ID Usuario: $id \n" +
                 "Juego: $name  \n" +
@@ -63,21 +61,22 @@ class GameBreak(){
                 "Precio final: $precioFinal")
 
     }
-    fun cargarSaldo(usuario: User?, monto: Double){///podria estar en user
+    fun cargarSaldo(usuario: User?){
+        println("ingresa monto deseado para cargar")
+        val monto:Double = readln().toDouble()
         usuario?.money = usuario?.money!! + monto
+        println("nuevo saldo: ${usuario.money}")
     }
-    fun mostrarHistorialDeCompra(id: Long?) :List<Purchase>{
-        ///mediante el id del usuario mostramos la listade compras que realizo
-        ///añadir funcion de retornarHistorial en PurcharseRepository
-        ///etc mostrar con un formato lindo
+    fun mostrarHistorialDeCompra(id: Long?){
 
-        val compra: List<Purchase> = PurchaseRepository.get().filter { it.userId == id }
-        if (compra.isEmpty()){
-            println("No hay compras hasta el momento.")
+        val historialDeCompra: List<Purchase> = PurchaseRepository.get().filter { it.userId == id }
+        for(compra in historialDeCompra){
+            println(compra)
         }
-        return compra
+
     }
     fun menuOpcional():Int{///validar
+
         println("Que desea hacer:")
         println("1-Comprar juego")
         println("2-Mostrar Compras")
@@ -87,7 +86,7 @@ class GameBreak(){
         return op
     }
 
-    fun elegirJuego():Game?{
+    fun elegirJuego():Game{
         val idJuego: Long
         println("---JUEGOS DISPONIBLES---")
         val listaDeJuegos: List<Game> = GameRepository.get()
@@ -107,11 +106,10 @@ class GameBreak(){
         println("2-EpicGames")
         println("3-Nakama")
         op = readln().toInt()
+
         return op
     }
 }
 class saldont() : Exception(){
     fun getMensaje():String = "saldo insuficiente"
 }
-
-
