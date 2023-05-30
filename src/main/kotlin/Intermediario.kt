@@ -1,12 +1,15 @@
 package src.main.kotlin
 
+import src.main.kotlin.src.main.kotlin.repositories.calcularDifenMeses
+import java.time.LocalDate
+
 abstract class Intermediario() {
     abstract fun aplicarComision(precio: Double):Double
-    fun calcularCashBack(createdDate: String?, amount:Double):Double {
+    fun calcularCashBack(createdDate: String, amount:Double):Double {
 
         val cashback: Double
-        val fecha  = Fecha(createdDate)
-        val mesCreacion = fecha.calcularDiferenciaDeMeses()///funcion de Extensio de localDate
+        val fecha:LocalDate = LocalDate.now();
+        val mesCreacion = fecha.calcularDifenMeses(createdDate)///funcion de Extensio de localDate
 
         cashback = when(mesCreacion){
             in 1..3 -> {

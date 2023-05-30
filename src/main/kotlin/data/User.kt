@@ -29,4 +29,10 @@ data class User(
         return this.money >= precioDelJuego;
     }
 
+    fun cargarSaldo(monto: Double){
+
+        this.money += monto
+        println("nuevo saldo: ${this.money}")
+    }
+
 }

@@ -27,21 +27,23 @@ fun main(){
             when(opcionElegida){
                 1->{
                     val intermediarioElegido = games.elegirIntermediario()
-                    val juego: Game = games.elegirJuego()!!
+                    val juego: Game = games.elegirJuego()
                     intentarComprarJuego(intermediarioElegido,juego.id,juego.price,usuario!!,games);
                 }
                 2->{
-                    games.mostrarHistorialDeCompra(usuario?.id)
+                    PurchaseRepository.mostrarHistorialDeCompra(usuario?.id)
                 }
                 3->{
-                    games.cargarSaldo(usuario)
+                    println("ingresa monto deseado para cargar")
+                    val monto:Double = readln().toDouble()
+                    usuario!!.cargarSaldo(monto)
+                    }
                 }
-            }
-            opcionElegida = games.menuOpcional()
         }
+        opcionElegida = games.menuOpcional()
     }
 
-    println("Gracias vuelva pronto")
+    println("Gracias vuelvas prontos")
 }
 
 fun menu():Int{///aca tenemos que validar el numero

@@ -24,12 +24,26 @@ object  PurchaseRepository {
         purchases.add(purchase)
     }
 
-        fun get() : List<Purchase> {
+    fun get() : List<Purchase> {
             return purchases//TODO Implementar solucion para obtener todos los juegos
-        }
+    }
 
-        fun getLastId(): Long{
+    fun getLastId(): Long{
         val ultimo = purchases.last()
         return ultimo.id+1;
+    }
+
+    fun mostrarHistorialDeCompra(id: Long?){
+
+        val historialDeCompra: List<Purchase> = get().filter { it.userId == id }
+
+        if(historialDeCompra.isEmpty()){
+            println("no posee un historial de compra")
+        }else{
+            for(compra in historialDeCompra){
+                println(compra)
+            }
+        }
+
     }
 }
