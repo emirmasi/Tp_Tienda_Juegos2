@@ -1,17 +1,16 @@
 package  src.main.kotlin
 import data.*
 import repositories.*
-import java.lang.Exception
 
 fun main(){
     var opcionElegida:Int
-    val games = GameBreak()
+    val games:GameBreak
     var usuario: User? = null
     var cantIntentos = 0
 
     while( usuario == null && cantIntentos<3){///podria ser una funcion aparte
         opcionElegida = menu()
-            usuario = ingresarAlSistema(opcionElegida,games)
+            usuario = ingresarAlSistema(opcionElegida)
             if(usuario==null){
                 println("intentelo de nuevo")
                 cantIntentos++;
@@ -22,13 +21,12 @@ fun main(){
     if(cantIntentos == 3){
         println("cantidad de intentos maximo alcanzados , vuelva intentarlo mas tarde")
     }else{
+        games = GameBreak()
         opcionElegida = games.menuOpcional()///este esta bien
         while(opcionElegida != 4){
             when(opcionElegida){
                 1->{
-                    val intermediarioElegido = games.elegirIntermediario()
-                    val juego: Game = games.elegirJuego()
-                    intentarComprarJuego(intermediarioElegido,juego.id,juego.price,usuario!!,games);
+                        games.comprarJuego(usuario!!)
                 }
                 2->{
                     PurchaseRepository.mostrarHistorialDeCompra(usuario?.id)
@@ -38,69 +36,35 @@ fun main(){
                     val monto:Double = readln().toDouble()
                     usuario!!.cargarSaldo(monto)
                     }
-                }
+            }
+            opcionElegida = games.menuOpcional()
         }
-        opcionElegida = games.menuOpcional()
+
     }
 
     println("Gracias vuelvas prontos")
 }
 
 fun menu():Int{///aca tenemos que validar el numero
-    println ("ELEGIR OPCION:")
-    println("1-Loguear")
-    println("2-Crear Usuario")
-    val opciones: Int = readln().toInt()
+    var opciones:Int
+    do {
+        println ("ELEGIR OPCION:")
+        println("1-Loguear")
+        println("2-Crear Usuario")
+        opciones = readln().toInt()
+        if(opciones <1 && opciones >2)
+            println("opcion invalida, intentelo de nuevo")
+    }while(opciones <1 && opciones >2)
     return opciones
 }
-fun intentarComprarJuego(
-    intermediarioElegido: Int,
-    idJuego: Long,
-    precioDelJuego:Double,
-    usuario: User,
-    games: GameBreak
-){
-    when(intermediarioElegido){
-        1->{
-            try {
-                val steam = Steam()
-                games.comprarJuego(steam,idJuego,precioDelJuego,usuario)
-                println("compra exitosa")
-            }catch (e: saldont){
-                println(e.getMensaje())
-            }
 
+fun ingresarAlSistema(opcionElegida:Int): User? {
+    when(opcionElegida){
+        1->{
+            return UserRepository.loguear()
         }
         2->{
-            try {
-                val epicGames = EpicGames()
-                games.comprarJuego(epicGames,idJuego,precioDelJuego,usuario)
-                println("compra exitosa")
-            }catch (e: saldont){
-                println(e.getMensaje())
-            }
-
-        }
-        3->{
-            val nakama = Nakama()
-            try {
-                games.comprarJuego(nakama,idJuego,precioDelJuego,usuario)
-                println("compra exitosa")
-            }catch(e: saldont){
-                println(e.getMensaje())
-            }
-
-        }
-
-    }
-}
-fun ingresarAlSistema(opcionElegida:Int,sistema:GameBreak): User? {
-    when(opcionElegida){///puede ser una funcion este when
-        1->{
-            return sistema.loguear()
-        }
-        2->{
-            return sistema.crearUsuario()
+            return UserRepository.crearUsuario()
         }
         else-> {
             println("codigo incorrecto")

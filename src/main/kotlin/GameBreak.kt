@@ -2,80 +2,24 @@ package  src.main.kotlin
 import data.*
 import repositories.*
 import src.main.kotlin.src.main.kotlin.repositories.hoyConMiFormato
+import java.lang.RuntimeException
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 class GameBreak(){
-    private lateinit var usuario:User
-    fun crearUsuario():User?{
 
-        var nickname: String
-        var password: String
-        var name:String
-        var surname:String
-        var money:Double
+    fun comprarJuego(usuario: User){
 
-        do {
-            println("Ingrese el NickName:")
-            nickname = readln()
-            println("Ingrese el password:")
-            password = readln()
-            println("Ingrese su nombre:")
-            name = readln()
-            println("Ingrese su apellido:")
-            surname = readln()
-            println("Ingrese su money:")
-            money = readln().toDouble()
-
-            if(nickname.isEmpty() || password.isEmpty() || name.isEmpty() || surname.isEmpty()) {
-                println("error: algun campo esta vacio, intentelo de nuevo")
-            }
-        }while(nickname.isEmpty() || password.isEmpty() || name.isEmpty() || surname.isEmpty())
-
-            val hoy:LocalDate = LocalDate.now()
-
-            usuario = User(UserRepository.getLastId(),nickname,password,name,surname,money,hoy.hoyConMiFormato())
-            if(UserRepository.addUser(usuario)){
-                println("se registro correctamente")
-            }else{
-                println("ocurrio un error al registrarse")
-            }
-            return usuario
-    }
-    fun loguear(): User?{///este es de user
-
-        println("Ingrese el nickName:")
-        val nickname: String = readln()
-
-        println("Ingrese el password:")
-        val password: String = readln()
-
-        return  UserRepository.login(nickname,password)
-
-    }
-    fun comprarJuego(intermediario: Intermediario,idGame: Long,precioDelJuego: Double,usuario: User){
-
-        val precioTotal = intermediario.aplicarComision(precioDelJuego)
-        if(usuario.comprobarSaldo(precioDelJuego)){
-            val hoy = LocalDate.now()
-            usuario.realizarCompra(PurchaseRepository.getLastId(),idGame,precioTotal,hoy.hoyConMiFormato())
-            val cashBack = intermediario.calcularCashBack(hoy.hoyConMiFormato(),precioTotal)
-            usuario.actualizarSaldo(precioTotal,cashBack)
-        }else{
-            throw saldont()
+        val intermediario: Intermediario = getIntermediario()
+        var juego:Game
+        try {
+            juego = elegirJuego()
+            usuario.realizarCompra(intermediario,juego)
+        }catch (e:Exception){
+            println(e.message)
         }
 
     }
-    ///esta funcion puede ser el de resumen de compra de purchase
-    fun imprimirCompra(id: Long?, name: String, precioOriginal: Double, precioFinal: Double){
-        println("DETALLES DE LA COMPRA:")
-        println("ID Usuario: $id \n" +
-                "Juego: $name  \n" +
-                "Precio original: $precioOriginal \n" +
-                "Precio final: $precioFinal")
-
-    }
-
 
     fun menuOpcional():Int{///validar
         var op:Int;
@@ -93,30 +37,50 @@ class GameBreak(){
         return op
     }
 
-    fun elegirJuego():Game{
+    fun elegirJuego(): Game {
         val idJuego: Long
-        println("---JUEGOS DISPONIBLES---")
+
+        println("------JUEGOS DISPONIBLES-------")
         val listaDeJuegos: List<Game> = GameRepository.get()
         for(juego in listaDeJuegos){
             println(juego)
         }
+        ///validarlo
         println("INGRESE EL ID DEL JUEGO QUE DESEE COMPRAR")
         idJuego = readln().toLong()
-        ///tengo que validar esto
+        if(!GameRepository.idValido(idJuego))throw RuntimeException("id incorrecto")
         return GameRepository.getById(idJuego)
     }
-    fun elegirIntermediario():Int{///validarlo
+    fun menuElegirIntermediario():Int{
 
-        val op: Int
-        println("Elegi un intermediario")
-        println("1-Steam")
-        println("2-EpicGames")
-        println("3-Nakama")
-        op = readln().toInt()
-
+        var op: Int
+        do{
+            println("Elige un intermediario")
+            println("1-Steam")
+            println("2-EpicGames")
+            println("3-Nakama")
+            op = readln().toInt()
+            if(op <1 && op >3)
+                println("codigo incorrecto intentelo de nuevo")
+        }while(op < 1 && op > 3)
         return op
+    }
+    fun getIntermediario():Intermediario {
+
+        val intermediarioElegido = menuElegirIntermediario()
+        val intermediario: Intermediario
+
+        if(intermediarioElegido==1){
+            intermediario = Steam()
+        }else if(intermediarioElegido == 2){
+            intermediario = EpicGames()
+        }else{
+            intermediario = Nakama()
+        }
+        return intermediario
     }
 }
 class saldont() : Exception(){
-    fun getMensaje():String = "saldo insuficiente"
+    override val message: String
+        get() = "saldo insuficiente"
 }

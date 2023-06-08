@@ -1,9 +1,10 @@
 package data
 
 import repositories.PurchaseRepository
-import repositories.UserRepository
+import src.main.kotlin.Intermediario
+import src.main.kotlin.saldont
+import src.main.kotlin.src.main.kotlin.repositories.hoyConMiFormato
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 data class User(
     val id: Long,
@@ -17,11 +18,26 @@ data class User(
     override fun toString(): String {
         return "User(id=$id, nickName='$nickName', password='$password', name='$name', surname='$surname', money=$money, createdDate='$createdDate')"
     }
-    fun realizarCompra(id: Long, gameid: Long, precio: Double, fecha: String){
-        var compra = Purchase(id, this.id, gameid, precio, fecha)
-        PurchaseRepository.add(compra)
+    fun realizarCompra(intermediario:Intermediario,juego:Game){
+
+        val precioTotal = intermediario.aplicarComision(juego.price)
+
+        if(comprobarSaldo(precioTotal)){
+            val hoy = LocalDate.now()
+
+            val compra = Purchase(PurchaseRepository.getLastId(), this.id, juego.id,precioTotal,hoy.hoyConMiFormato())
+            PurchaseRepository.add(compra)
+
+            val cashBack = intermediario.calcularCashBack(hoy.hoyConMiFormato(),precioTotal)
+
+            actualizarSaldo(precioTotal,cashBack)
+
+            compra.imprimirCompra(name,juego.price,precioTotal)
+        }else{
+            throw saldont()
+        }
     }
-    fun actualizarSaldo(precioTotal: Double,cashBack: Double){///funcion en usuario
+    fun actualizarSaldo(precioTotal: Double,cashBack: Double){
         this.money -= (precioTotal + cashBack)
     }
 

@@ -3,7 +3,6 @@ import java.time.LocalTime
 
 class EpicGames(): Intermediario() {
 
-    ///si se relaizo dentro de las 20:00 y 23:59 se descuenta un 1% si no un 3%
     private val fechaActual = LocalTime.now()//"yyyy-mm-dd: hh:mm:ss"
     private val hora = fechaActual.hour
 
