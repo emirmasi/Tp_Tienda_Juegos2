@@ -1,5 +1,6 @@
 package data
 
+import repositories.GameRepository
 import repositories.PurchaseRepository
 
 data class Purchase(
@@ -12,7 +13,7 @@ data class Purchase(
     fun imprimirCompra(name: String, precioOriginal: Double, precioFinal: Double){
         println("DETALLES DE LA COMPRA:")
         println("Usuario: $name \n" +
-                "Juego: $gameId  \n" +
+                "Juego: ${GameRepository.getById(gameId).name}  \n" +
                 "Precio original: $precioOriginal \n" +
                 "Precio final: $precioFinal")
 
