@@ -29,7 +29,7 @@ fun main(){
                         games.comprarJuego(usuario!!)
                 }
                 2->{
-                    PurchaseRepository.mostrarHistorialDeCompra(usuario?.id)
+                        usuario!!.mostrarHistorialDeCompra()
                 }
                 3->{
                     println("ingresa monto deseado para cargar")
@@ -45,7 +45,7 @@ fun main(){
     println("Gracias vuelvas prontos")
 }
 
-fun menu():Int{///aca tenemos que validar el numero
+fun menu():Int{
     var opciones:Int
     do {
         println ("ELEGIR OPCION:")

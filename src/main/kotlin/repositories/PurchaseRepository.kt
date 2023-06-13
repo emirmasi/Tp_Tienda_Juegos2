@@ -20,7 +20,6 @@ object  PurchaseRepository {
     }
 
     fun add(purchase: Purchase) {
-
         purchases.add(purchase)
     }
 
@@ -33,17 +32,9 @@ object  PurchaseRepository {
         return ultimo.id+1;
     }
 
-    fun mostrarHistorialDeCompra(id: Long?){
-
-        val historialDeCompra: List<Purchase> = get().filter { it.userId == id }
-
-        if(historialDeCompra.isEmpty()){
-            println("no posee un historial de compra")
-        }else{
-            for(compra in historialDeCompra){
-                println(compra)
-            }
-        }
-
+    fun getHistorialDeCompra(id: Long?):List<Purchase>{
+        return purchases.filter { it.userId == id }
     }
+
+
 }

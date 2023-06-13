@@ -18,7 +18,7 @@ object UserRepository {
     fun login(nickName: String,password: String) : User? {
         return users.firstOrNull { user -> user.nickName == nickName && user.password == password }
     }
-    fun loguear(): User?{///este es de user
+    fun loguear(): User?{
 
         var nickname:String
         var password:String

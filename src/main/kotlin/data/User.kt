@@ -51,4 +51,17 @@ data class User(
         println("nuevo saldo: ${this.money}")
     }
 
+    fun mostrarHistorialDeCompra(){
+
+        val historialDeCompra: List<Purchase> = PurchaseRepository.getHistorialDeCompra(this.id)
+
+        if(historialDeCompra.isEmpty()){
+            println("no posee un historial de compra")
+        }else{
+            for(compra in historialDeCompra){
+                println(compra)
+            }
+        }
+
+    }
 }
